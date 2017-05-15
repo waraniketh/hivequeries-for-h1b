@@ -1,0 +1,30 @@
+1 a) Is the number of petitions with Data Engineer job title increasing over time?
+Select count(*) as kill,year from waraniketh where job_title=”Data Engineer” group by job_title,year order by kill ;
+b) Find top 5 job titles who are having highest growth in applications.
+Select count(*) as kill,job_title from waraniketh group by job_title order by kill desc limit 5;
+2 a) Which part of the US has the most Data Engineer jobs for each year?
+select war4,m.kill from(select max(thop) as war4,b.year as req from (Select count(*) as thop,year,worksite as kill from waraniketh group by year,worksite) b  group by b.year)n join (select count(*) as thop1,year,worksite as kill from waraniketh where job_title=”Data Engineer”group by year,worksite)m on n.req=m.year and n.war4=m.thop1;
+or
+ select war4,m.kill,m.year from(select max(thop) as war4,b.year as req from (Select count(*) as thop,year,worksite as kill from h1b_applications group by year,worksite) b  group by b.year)n join (select count(*) as thop1,year,worksite as kill from h1b_applications where job_title=”Data Engineer” group by year,worksite)m on n.req=m.year and n.war4=m.thop1;
+   b) find top 5 locations in the US who have got certified visa for each year.
+ Select count(*) as kill from waraniketh where case_status="CERTIFIED" or case_status="CERTIFIED-WITHDRAWN" group by worksite,year order by kill limit 5 ;
+3)Which industry has the most number of Data Scientist positions?
+Select count(*) as war1 from waraniketh where job_title=”Data Scientist” group by soc_name order by war1 limit 1;
+4)Which top 5 employers file the most petitions each year?
+ select thop,employer_name,year from(select rank() over (partition by year order by war1 desc) as thop,employer_name,year from(Select count(*) as war1,employer_name,year from h1b_applications group by employer_name,year) a)b where thop<6 and year is not null;
+5) Find the most popular top 10 job positions for H1B visa applications for each year?
+   select * from(Select rank() over (partition by year order by war desc) as thop,job_title,year from (Select count(*) as war,year,job_title from h1b_applications group by job_title,year ) a)b where b.thop<6;
+6) Find the percentage and the count of each case status on total applications for each year. Create a graph depicting the pattern of All the cases over the period of time.
+Select count(*),case_stauts,year from waraniketh  group by case_status,year;
+
+7) Create a bar graph to depict the number of applications for each year
+select count(*),year from waraniketh group by year;
+
+8) Find the average Prevailing Wage for each Job for each Year (take part time and full time separate)
+select avg(prevailing_wage),job_title,year from waraniketh group by year,job_title order by job_title;
+
+9) Which are top ten employers who have the highest success rate in petitions?
+Select (kill*100)/kill1 from (select count(*) as kill1,1 as tojoin from waraniketh)b join (Select count(*) as kill,1 as tojoin from waraniketh where case_status=”Certified “ or case_status=”Certified Withdrawn” group by employer_name) a on a.tojoin=b.tojoin;
+
+10) Which are the top 10 job positions which have the highest success rate in petitions?
+Select (thop*100)/kill1 from (Select count(*) as thop,job_title from waraniketh where case_status=”Certified “ or case_status=”Certified Withdrawn”  group by job_title )b,(Select count(*)  as kill1 from waraniketh) a;
